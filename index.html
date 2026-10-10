@@ -163,6 +163,7 @@
         <rect x="40" y="52" width="280" height="250" fill="url(#water)" class="water"/>
         <path d="M48 91 Q80 85 112 91 T176 91 T240 91 T312 91" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
         <g id="fish" class="fish">
+          <g transform="translate(180 170)">
           <path d="M-6 0 Q-36 -33 -49 -15 Q-55 0 -49 15 Q-36 33 -6 0Z" fill="url(#fin)" stroke="#f18b27" stroke-width="1.5"/>
           <path d="M-1 -3 Q-20 -29 -32 -21 M-4 2 Q-26 22 -35 17" fill="none" stroke="#fff0bc" stroke-width="1.5" opacity=".85"/>
           <path d="M-1 -7 Q-10 -27 10 -27 Q21 -19 12 -7Z" fill="url(#fin)" opacity=".9"/>
@@ -174,6 +175,7 @@
           <circle cx="28.5" cy="-5.8" r=".8" fill="#fff"/>
           <path d="M35 5 Q41 9 45 4" fill="none" stroke="#c95a1a" stroke-width="1.5" stroke-linecap="round"/>
           <path d="M-1 0 Q-12 -5 -15 -14" fill="none" stroke="#fff0bc" stroke-width="1.4" opacity=".8"/>
+          </g>
         </g>
         <g id="food" class="food" fill="#8d6235">
           <circle cx="154" cy="106" r="3"/><circle cx="168" cy="113" r="2.5"/><circle cx="180" cy="104" r="2.5"/>
@@ -193,6 +195,7 @@
   <div class="details">
     <div id="lifespan">alive for 0 days, 0 hours</div>
     <div class="birth" id="birth"></div>
+    <div class="birth" id="lastFed"></div>
     <div class="message" id="message" aria-live="polite"></div>
   </div>
 </main>
@@ -203,6 +206,7 @@
 
   // 48 hours without food means the fish has died.
   const SURVIVAL_MS = 48 * 60 * 60 * 1000;
+  const STORAGE_KEY = "littleFishLife";
   const COOKIE_NAME = "littleFishLife";
   const COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 5;
 
@@ -213,22 +217,37 @@
   const newButton = document.getElementById("newButton");
   const lifespan = document.getElementById("lifespan");
   const birth = document.getElementById("birth");
+  const lastFed = document.getElementById("lastFed");
   const subtitle = document.getElementById("subtitle");
   const message = document.getElementById("message");
 
-  function readCookie(name) {
-    const prefix = encodeURIComponent(name) + "=";
+  function readSavedLife() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (error) {
+      // Some browser preview modes restrict localStorage; try cookies below.
+    }
+    const prefix = encodeURIComponent(COOKIE_NAME) + "=";
     const item = document.cookie.split("; ").find(row => row.startsWith(prefix));
     if (!item) return null;
     try { return JSON.parse(decodeURIComponent(item.slice(prefix.length))); }
-    catch { return null; }
+    catch (error) { return null; }
   }
 
-  function writeCookie(data) {
+  function saveLife(data) {
+    let savedLocally = false;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      savedLocally = true;
+    } catch (error) {
+      // Fall back to a cookie if localStorage is unavailable.
+    }
     const secure = location.protocol === "https:" ? "; Secure" : "";
     document.cookie = encodeURIComponent(COOKIE_NAME) + "=" +
       encodeURIComponent(JSON.stringify(data)) +
       "; Max-Age=" + COOKIE_MAX_AGE + "; Path=/; SameSite=Lax" + secure;
+    return savedLocally;
   }
 
   function formatDate(timestamp) {
@@ -259,21 +278,22 @@
   }
 
   function updateLifespan() {
-    const data = readCookie(COOKIE_NAME);
+    const data = readSavedLife();
     if (!data || !Number.isFinite(data.bornAt)) return;
     lifespan.textContent = elapsedText(Date.now() - data.bornAt);
   }
 
   function initialize() {
-    let data = readCookie(COOKIE_NAME);
+    let data = readSavedLife();
     const now = Date.now();
 
     if (!data || !Number.isFinite(data.bornAt) || !Number.isFinite(data.fedAt)) {
       data = { bornAt: now, fedAt: now };
-      writeCookie(data);
+      saveLife(data);
     }
 
     birth.textContent = "born " + formatDate(data.bornAt);
+    lastFed.textContent = "last fed " + formatDate(data.fedAt);
 
     if (now - data.fedAt >= SURVIVAL_MS) {
       setDead();
@@ -286,21 +306,23 @@
   }
 
   feedButton.addEventListener("click", () => {
-    const data = readCookie(COOKIE_NAME);
+    const data = readSavedLife();
     if (!data || Date.now() - data.fedAt >= SURVIVAL_MS) {
       setDead();
       return;
     }
     data.fedAt = Date.now();
-    writeCookie(data);
+    saveLife(data);
+    lastFed.textContent = "last fed " + formatDate(data.fedAt);
+    feedButton.textContent = "fed! thank you ♡";
+    message.textContent = "yum! see you soon?";
     food.classList.remove("drop");
     void food.getBoundingClientRect();
     food.classList.add("drop");
-    message.textContent = "yum! see you soon?";
   });
 
   newButton.addEventListener("click", () => {
-    writeCookie({ bornAt: Date.now(), fedAt: Date.now() });
+    saveLife({ bornAt: Date.now(), fedAt: Date.now() });
     location.reload();
   });
 
