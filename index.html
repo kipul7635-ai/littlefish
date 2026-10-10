@@ -60,15 +60,13 @@
   @keyframes rise { to { transform: translate(24px, -120vh); } }
   .scene {
     width: min(440px, 100%); position: relative; z-index: 1; text-align: center;
-    padding: 25px 18px 23px; border-radius: 34px;
+    padding: 22px 18px 23px; border-radius: 34px;
     background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.22) 28%, rgba(255,255,255,.36));
     -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
     border: 1px solid rgba(255,255,255,.88);
     box-shadow: 0 28px 58px -24px rgba(8,80,140,.48), 0 0 0 5px rgba(255,255,255,.18),
       inset 0 1px 0 #fff, inset 0 -3px 12px rgba(30,140,220,.16);
   }
-  h1 { font-size: 1.35rem; margin: 0 0 4px; font-weight: 800; letter-spacing: -.025em; text-shadow: 0 1px 0 white; }
-  .subtitle { color: var(--ink-soft); font-size: .9rem; font-weight: 600; margin-bottom: 12px; }
   .bowl-wrap { width: min(330px, 88vw); margin: 0 auto; position: relative; }
   .bowl { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 18px rgba(0,92,145,.18)); }
   .fish {
@@ -101,16 +99,16 @@
   }
   button:hover { filter: brightness(1.07); }
   button:active { transform: translateY(1px); }
+  button + button { margin-left: 8px; }
   .details { margin-top: 14px; font-size: .9rem; line-height: 1.65; font-weight: 700; }
   .birth { color: var(--ink-soft); font-size: .8rem; font-weight: 600; }
   .message { min-height: 1.5em; color: var(--ink-soft); font-size: .83rem; margin-top: 4px; }
   .dead .water { fill: #a9dce9; }
   .dead .scene { filter: saturate(.68); }
-  .dead .subtitle { color: #718b99; }
   .dead-message { color: #6b7780; }
   @media (max-width: 420px) {
     body { padding: 12px; }
-    .scene { padding: 20px 12px; border-radius: 28px; }
+    .scene { padding: 18px 12px; border-radius: 28px; }
     .bowl-wrap { width: min(300px, 85vw); }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -132,8 +130,6 @@
 </div>
 
 <main class="scene" id="scene">
-  <h1>little fish, little life</h1>
-  <div class="subtitle" id="subtitle">a tiny thing to look after</div>
   <div class="bowl-wrap">
     <svg class="bowl" viewBox="0 0 360 320" role="img" aria-label="A goldfish swimming in a round glass fishbowl">
       <defs>
@@ -147,15 +143,6 @@
           <stop offset="0" stop-color="#9cecff" stop-opacity=".45"/>
           <stop offset="1" stop-color="#27b9eb" stop-opacity=".28"/>
         </linearGradient>
-        <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ffd36b"/>
-          <stop offset=".52" stop-color="#ff9e27"/>
-          <stop offset="1" stop-color="#f36b18"/>
-        </linearGradient>
-        <linearGradient id="fin" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffe8a0" stop-opacity=".95"/>
-          <stop offset="1" stop-color="#ff8b35" stop-opacity=".75"/>
-        </linearGradient>
         <clipPath id="bowlClip"><path d="M42 68 C42 37 276 37 318 68 L302 210 C296 266 246 291 180 291 C114 291 64 266 58 210 Z"/></clipPath>
       </defs>
       <ellipse cx="180" cy="293" rx="113" ry="12" fill="#0879b5" opacity=".12"/>
@@ -164,17 +151,7 @@
         <path d="M48 91 Q80 85 112 91 T176 91 T240 91 T312 91" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
         <g id="fish" class="fish">
           <g transform="translate(180 170)">
-          <path d="M-6 0 Q-36 -33 -49 -15 Q-55 0 -49 15 Q-36 33 -6 0Z" fill="url(#fin)" stroke="#f18b27" stroke-width="1.5"/>
-          <path d="M-1 -3 Q-20 -29 -32 -21 M-4 2 Q-26 22 -35 17" fill="none" stroke="#fff0bc" stroke-width="1.5" opacity=".85"/>
-          <path d="M-1 -7 Q-10 -27 10 -27 Q21 -19 12 -7Z" fill="url(#fin)" opacity=".9"/>
-          <path d="M-1 8 Q-8 27 10 25 Q20 16 12 7Z" fill="url(#fin)" opacity=".9"/>
-          <ellipse cx="8" cy="0" rx="31" ry="20" fill="url(#orange)" stroke="#e77c1e" stroke-width="1.5"/>
-          <path d="M2 -17 Q-5 0 2 17 M13 -19 Q6 0 13 19" fill="none" stroke="#ffdf85" stroke-width="2" opacity=".75"/>
-          <path d="M31 -8 Q42 0 31 8" fill="none" stroke="#d96318" stroke-width="1.5"/>
-          <circle cx="27" cy="-5" r="3.6" fill="#fff"/><circle cx="28" cy="-5" r="2" fill="#193d50"/>
-          <circle cx="28.5" cy="-5.8" r=".8" fill="#fff"/>
-          <path d="M35 5 Q41 9 45 4" fill="none" stroke="#c95a1a" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M-1 0 Q-12 -5 -15 -14" fill="none" stroke="#fff0bc" stroke-width="1.4" opacity=".8"/>
+            <image href="goldfish.png" x="-50" y="-30" width="100" height="60" preserveAspectRatio="xMidYMid meet"/>
           </g>
         </g>
         <g id="food" class="food" fill="#8d6235">
@@ -218,7 +195,6 @@
   const lifespan = document.getElementById("lifespan");
   const birth = document.getElementById("birth");
   const lastFed = document.getElementById("lastFed");
-  const subtitle = document.getElementById("subtitle");
   const message = document.getElementById("message");
 
   function readSavedLife() {
@@ -272,7 +248,6 @@
     fish.setAttribute("transform", "rotate(180 8 0)");
     feedButton.hidden = true;
     newButton.hidden = false;
-    subtitle.textContent = "the water is very still";
     message.textContent = "you should have come back sooner.";
     message.classList.add("dead-message");
   }
@@ -300,8 +275,6 @@
     } else {
       fish.classList.add(Math.random() < 0.5 ? "flip" : "");
       updateLifespan();
-      const hoursLeft = Math.ceil((SURVIVAL_MS - (now - data.fedAt)) / (60 * 60 * 1000));
-      message.textContent = "next feeding due within " + hoursLeft + (hoursLeft === 1 ? " hour" : " hours");
     }
   }
 
@@ -314,8 +287,6 @@
     data.fedAt = Date.now();
     saveLife(data);
     lastFed.textContent = "last fed " + formatDate(data.fedAt);
-    feedButton.textContent = "fed! thank you ♡";
-    message.textContent = "yum! see you soon?";
     food.classList.remove("drop");
     void food.getBoundingClientRect();
     food.classList.add("drop");
